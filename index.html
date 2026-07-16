@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Workup Checklist</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FAF9F5;
+    --paper-raised: #FFFFFF;
+    --paper-nested: #FCFBF8;
+    --ink: #22282F;
+    --ink-soft: #5B6472;
+    --ink-faint: #9AA1AB;
+    --line: #E4E1D8;
+    --line-strong: #D5D1C4;
+    --ok: #3F7D5C;
+    --ok-bg: #E9F3ED;
+    --btn-bg: #22282F;
+    --btn-fg: #FAF9F5;
+
+    --c-intraform: #3B6E9E;
+    --c-intraform-bg: #E9F1F8;
+    --c-lease: #3F7D5C;
+    --c-lease-bg: #E8F1EC;
+    --c-ledger: #A8791F;
+    --c-ledger-bg: #F6EFDD;
+    --c-addendum: #7D5BA6;
+    --c-addendum-bg: #F0EBF6;
+    --c-notice: #B8433D;
+    --c-notice-bg: #FAEBEA;
+    --c-others: #5B6472;
+    --c-others-bg: #EDEDEB;
+    --c-cupcake: #C25C88;
+    --c-cupcake-bg: #F9E9F1;
+  }
+
+  html[data-theme="dark"]{
+    --paper: #191C21;
+    --paper-raised: #22262D;
+    --paper-nested: #1E2228;
+    --ink: #E8E9EA;
+    --ink-soft: #A6ADB8;
+    --ink-faint: #6E7681;
+    --line: #30353D;
+    --line-strong: #3C424C;
+    --ok: #57A47C;
+    --ok-bg: #223B2E;
+    --btn-bg: #E8E9EA;
+    --btn-fg: #191C21;
+
+    --c-intraform: #7FAEDB;
+    --c-intraform-bg: #22303E;
+    --c-lease: #7CBD9C;
+    --c-lease-bg: #22342B;
+    --c-ledger: #D3A94E;
+    --c-ledger-bg: #38301D;
+    --c-addendum: #B399D9;
+    --c-addendum-bg: #302840;
+    --c-notice: #E07B76;
+    --c-notice-bg: #3C2624;
+    --c-others: #A6ADB8;
+    --c-others-bg: #2B2F36;
+    --c-cupcake: #E08FB4;
+    --c-cupcake-bg: #3A2530;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 110px;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  /* ---------- Sticky header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 14px 16px 12px;
+    transition: background 0.25s ease;
+  }
+  .eyebrow-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 6px;
+  }
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin: 0;
+  }
+  .theme-btn{
+    background: transparent;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 8px;
+    width: 34px;
+    height: 30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding: 0;
+    color: var(--ink-soft);
+  }
+  .theme-btn svg{ width:16px; height:16px; }
+  .theme-btn:active{ opacity: 0.7; }
+
+  .case-row{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .case-input-wrap{
+    flex: 1;
+    display:flex;
+    align-items:baseline;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 4px;
+  }
+  .case-input-wrap span{
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    margin-right: 8px;
+    font-weight: 400;
+  }
+  #caseNo{
+    border:none;
+    outline:none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    width: 100%;
+  }
+  #caseNo::placeholder{ color: var(--ink-faint); font-weight: 400;}
+  #caseNo[readonly]{ pointer-events: none; }
+  .case-lock-hint{
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-left: 6px;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  /* ---------- Case number modal input ---------- */
+  .modal .case-input{
+    width: 100%;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding: 13px 12px;
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .modal .case-input:focus{ border-color: var(--ink); }
+  .modal .case-input::placeholder{ color: var(--ink-faint); font-weight: 400; font-size: 16px; }
+  .modal .modal-new-btn:disabled{ opacity: 0.35; cursor: default; }
+
+  .new-btn{
+    flex-shrink:0;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    cursor:pointer;
+  }
+  .new-btn:active{ opacity: 0.75; }
+
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .progress-track{
+    flex:1;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--line);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--ok);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  .progress-label{
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    white-space:nowrap;
+    min-width: 46px;
+    text-align:right;
+  }
+
+  /* ---------- Section pills (tappable) ---------- */
+  .dots-row{
+    display:flex;
+    justify-content:center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .dot{
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: var(--line);
+    color: var(--ink-soft);
+    border: 1.5px solid transparent;
+    cursor:pointer;
+    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    display:inline-flex;
+    align-items:center;
+    gap: 4px;
+  }
+  .dot .dot-check{ font-size: 9px; }
+  .dot.current{ border-color: var(--ink); }
+  .dot.locked{ opacity: 0.45; cursor: default; }
+
+  /* ---------- Single-section view ---------- */
+  main{
+    padding: 20px 14px 0;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap: 10px;
+    margin-bottom: 2px;
+  }
+  .tab{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    padding: 8px 16px 9px;
+    border-radius: 8px 8px 0 0;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    position: relative;
+    top: 1px;
+  }
+  .tab .tab-count{
+    font-weight: 700;
+    font-size: 12px;
+    opacity: 0.75;
+    text-transform:none;
+  }
+  .tab.done::after{
+    content:"✓";
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .step-label{
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-faint);
+    white-space:nowrap;
+  }
+
+  .section-body{
+    background: var(--paper-raised);
+    border: 1px solid var(--line-strong);
+    border-radius: 0 10px 10px 10px;
+    overflow: hidden;
+    transition: background 0.25s ease;
+  }
+  .section-body-inner{ padding: 6px 0; }
+
+  .item{
+    display:flex;
+    align-items:flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .item:last-child{ border-bottom:none; }
+  .item.nested{ padding-left: 40px; background: var(--paper-nested); }
+  .item.group-parent{ font-weight: 700; }
+
+  .box{
+    flex-shrink:0;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--line-strong);
+    margin-top: 1px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .box svg{ width: 13px; height: 13px; opacity:0; transition: opacity 0.1s ease; }
+  .item.checked{ background: var(--ok-bg); }
+  .item.checked .box{ background: var(--ok); border-color: var(--ok); }
+  .item.checked .box svg{ opacity: 1; }
+  .item.checked .label{ color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .item.auto .box{ background: var(--ink-faint); border-color: var(--ink-faint); }
+
+  @keyframes nudge{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-4px); }
+    75%{ transform: translateX(4px); }
+  }
+  .item.attention, .yesno-item.attention{ animation: nudge 0.3s ease 2; }
+
+  .label{
+    font-size: 14.5px;
+    line-height: 1.35;
+    padding-top: 2px;
+  }
+  .sublabel{
+    display:block;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* Yes/No fields */
+  .yesno-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+    transition: background 0.15s ease;
+  }
+  .yesno-item:last-child{ border-bottom:none; }
+  .yesno-item.answered{ background: var(--ok-bg); }
+  .yesno-label{ font-size: 14.5px; flex:1; }
+  .yesno-btns{ display:flex; gap:6px; flex-shrink:0; }
+  .yesno-btns button{
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12.5px;
+    padding: 7px 13px;
+    border-radius: 7px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--paper-raised);
+    color: var(--ink-soft);
+    cursor:pointer;
+  }
+  .yesno-btns button.active{
+    background: var(--btn-bg);
+    border-color: var(--btn-bg);
+    color: var(--btn-fg);
+    font-weight: 700;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-top: 1px solid var(--line-strong);
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+    transition: background 0.25s ease;
+  }
+  .bottom-nav-inner{
+    max-width: 640px;
+    margin: 0 auto;
+    display:flex;
+    gap: 10px;
+  }
+  .nav-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 6px;
+    padding: 14px 10px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor:pointer;
+    border: 1.5px solid var(--line-strong);
+    background: var(--paper-raised);
+    color: var(--ink);
+  }
+  .nav-btn:disabled{
+    opacity: 0.35;
+    cursor: default;
+  }
+  .nav-btn.primary{
+    background: var(--btn-bg);
+    border-color: var(--btn-bg);
+    color: var(--btn-fg);
+  }
+  .nav-btn.primary.waiting{
+    opacity: 0.45;
+  }
+  .nav-btn:not(:disabled):active{ opacity: 0.75; }
+
+  .nav-hint{
+    max-width: 640px;
+    margin: 8px auto 0;
+    text-align:center;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    display:none;
+  }
+  .nav-hint.show{ display:block; }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 105px;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 10px 16px;
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 90;
+    max-width: 85vw;
+    text-align:center;
+  }
+  .toast.show{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---------- Finish modal ---------- */
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background: var(--paper-raised);
+    border-radius: 18px;
+    max-width: 340px;
+    width: 100%;
+    padding: 28px 22px 22px;
+    text-align:center;
+    animation: pop 0.25s ease;
+  }
+  @keyframes pop{
+    from{ transform: scale(0.9); opacity: 0; }
+    to{ transform: scale(1); opacity: 1; }
+  }
+  .modal .big-emoji{
+    font-size: 46px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .modal h2{
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .modal p{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    line-height: 1.5;
+  }
+  .modal .modal-new-btn{
+    width: 100%;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    border:none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor:pointer;
+  }
+  .modal .modal-new-btn:active{ opacity: 0.75; }
+  .modal .modal-close{
+    margin-top: 10px;
+    background:none;
+    border:none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-faint);
+    cursor:pointer;
+    padding: 8px;
+  }
+
+  footer{
+    max-width: 640px;
+    margin: 22px auto 0;
+    padding: 0 16px;
+    text-align:center;
+  }
+  footer p{
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    line-height:1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow-row">
+    <p class="eyebrow">Workup Checklist</p>
+    <button class="theme-btn" id="themeBtn" aria-label="Switch between light and dark mode" title="Light / dark mode">
+      <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+  <div class="case-row">
+    <div class="case-input-wrap">
+      <span>Case No.</span>
+      <input id="caseNo" type="text" placeholder="—" autocomplete="off" readonly tabindex="-1">
+      <span class="case-lock-hint" id="caseLockHint" style="display:none">🔒</span>
+    </div>
+    <button class="new-btn" id="newBtn">New Checklist</button>
+  </div>
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 0</div>
+  </div>
+  <div class="dots-row" id="dotsRow"></div>
+</header>
+
+<main id="sections"></main>
+
+<footer>
+  <p>Nothing here is saved. Finish a case and start the next one clean.</p>
+</footer>
+
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-btn" id="prevBtn">‹ Previous</button>
+    <button class="nav-btn primary" id="nextBtn">Next ›</button>
+  </div>
+  <div class="nav-hint" id="navHint"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="finishModal">
+  <div class="modal">
+    <div class="big-emoji">🎉</div>
+    <h2 id="modalTitle">Another case done!</h2>
+    <p id="modalMsg">Great work. Stretch, sip some water, take a breather — the next file can wait a minute.</p>
+    <button class="modal-new-btn" id="modalNewBtn">New Checklist</button>
+    <button class="modal-close" id="modalCloseBtn">Stay on this case</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="caseModal">
+  <div class="modal">
+    <div class="big-emoji">🗂️</div>
+    <h2>New Checklist</h2>
+    <p>Enter the case number to begin. It can't be changed later — starting a different case means starting a new checklist.</p>
+    <input class="case-input" id="caseModalInput" type="text" placeholder="Case No." autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+    <button class="modal-new-btn" id="caseStartBtn" disabled>Start Checklist</button>
+  </div>
+</div>
+
+<script>
+/* ---------- Theme ---------- */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('iconMoon').style.display = theme === 'light' ? 'block' : 'none';
+  document.getElementById('iconSun').style.display  = theme === 'dark'  ? 'block' : 'none';
+}
+let theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+applyTheme(theme);
+document.getElementById('themeBtn').addEventListener('click', () => {
+  theme = theme === 'light' ? 'dark' : 'light';
+  applyTheme(theme);
+});
+
+/* ---------- Checklist data ---------- */
+const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.2 11.5L13 4" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function nameAddressGroups(prefix){
+  return [
+    { id: prefix+'_name', label: 'Name', group: true, children: [
+      { id: prefix+'_first', label: 'First Name' },
+      { id: prefix+'_middle', label: 'Middle Name' },
+      { id: prefix+'_last', label: 'Last Name' },
+      { id: prefix+'_suffix', label: 'Suffix' },
+    ]},
+    { id: prefix+'_address', label: 'Address', group: true, children: [
+      { id: prefix+'_street_no', label: 'Street No. / Apartment No.' },
+      { id: prefix+'_street_name', label: 'Street Name' },
+      { id: prefix+'_road_type', label: 'Road, Drive, Ln, etc' },
+      { id: prefix+'_city', label: 'City' },
+      { id: prefix+'_zip', label: 'Zipcode' },
+      { id: prefix+'_county', label: 'County' },
+    ]},
+  ];
+}
+
+const SECTIONS = [
+  {
+    key: 'intraform', title: 'Intraform', color: 'intraform',
+    items: [
+      { id: 'if_notes', label: 'Notes from Client' },
+      { id: 'if_military', label: 'Active Military', yesno: true },
+      { id: 'if_cares', label: 'Under CARES', yesno: true },
+      { id: 'if_prop_info', label: 'Check Prop Info', sublabel: 'Required because Under CARES is Yes', showIf: () => state['if_cares'] === 'Yes' },
+    ]
+  },
+  {
+    key: 'ledger', title: 'Ledger', color: 'ledger',
+    items: [
+      { id: 'ledger_name', label: 'Name' },
+      { id: 'ledger_deposit', label: 'Security Deposit' },
+      { id: 'ledger_dates', label: 'Dates' },
+      { id: 'ledger_charges', label: 'Charges' },
+      { id: 'ledger_legal_charges', label: 'Legal Charges' },
+      { id: 'ledger_damage_charges', label: 'Damage Charges' },
+      { id: 'ledger_concession', label: 'Concession' },
+      { id: 'ledger_dates_vs_notice', label: 'Date of Charges vs Date of Notice' },
+      { id: 'ledger_total_vs_ledger', label: 'Total Amount Owed vs Ledger' },
+    ]
+  },
+  {
+    key: 'lease', title: 'Lease', color: 'lease',
+    items: [
+      ...nameAddressGroups('lease'),
+      { id: 'lease_duration', label: 'Lease Duration' },
+      { id: 'lease_signature', label: 'Lease Signature' },
+      { id: 'lease_type', label: 'Lease Type' },
+    ]
+  },
+  {
+    key: 'addendum', title: 'Addendum', color: 'addendum',
+    items: [
+      { id: 'add_not_extended', label: 'If ledger is not extended' },
+      { id: 'add_charges_same', label: 'If the charges are the same' },
+    ]
+  },
+  {
+    key: 'notice', title: 'Notice', color: 'notice',
+    items: [
+      ...nameAddressGroups('notice'),
+      { id: 'notice_expiration', label: 'Notice Expiration' },
+      { id: 'notice_service_date', label: 'Date of Service', sublabel: 'Check if already expired' },
+    ]
+  },
+  {
+    key: 'others', title: 'Others', color: 'others',
+    items: [
+      { id: 'others_delete_pages', label: 'Delete Unnecessary Pages' },
+      { id: 'others_rotate', label: 'Rotate' },
+      { id: 'others_stamps', label: 'Check Stamps' },
+    ]
+  },
+  {
+    key: 'cupcake', title: 'Cupcake', color: 'cupcake',
+    items: [
+      { id: 'cc_name', label: 'Name', group: true, children: [
+        { id: 'cc_first', label: 'First Name' },
+        { id: 'cc_middle', label: 'Middle Name' },
+        { id: 'cc_last', label: 'Last Name' },
+        { id: 'cc_suffix', label: 'Suffix' },
+      ]},
+      { id: 'cc_address', label: 'Address', group: true, children: [
+        { id: 'cc_county', label: 'County' },
+        { id: 'cc_street_no', label: 'Street No. / Apartment No.' },
+        { id: 'cc_street_name', label: 'Street Name' },
+        { id: 'cc_abbreviate', label: 'Abbreviate' },
+        { id: 'cc_city', label: 'City' },
+        { id: 'cc_zip', label: 'Zipcode' },
+      ]},
+      { id: 'cc_notice_expiration', label: 'Notice Expiration' },
+      { id: 'cc_service_date', label: 'Date of Service' },
+      { id: 'cc_30_3', label: '30 Days/3 Days' },
+      { id: 'cc_through_date', label: 'Through Date' },
+    ]
+  },
+];
+
+const FINISH_MESSAGES = [
+  { title: 'Another case done! 🗂️', msg: 'Great work. Stretch, sip some water, take a breather — the next file can wait a minute.' },
+  { title: 'Case closed ✅', msg: 'That\'s one more off the pile. You\'ve earned a short break before the next one.' },
+  { title: 'Nice work! 💪', msg: 'Every box checked. Shake out those thumbs and grab a coffee before the next case.' },
+  { title: 'All done! 🌟', msg: 'Clean sweep on this one. Rest your eyes for a moment — you deserve it.' },
+];
+
+let state = {};       // id -> true/false, or 'Yes'/'No'
+let currentIdx = 0;   // which section is showing
+let toastTimer = null;
+
+function flattenLeaves(items){
+  let leaves = [];
+  items.forEach(it => {
+    if (it.showIf && !it.showIf()) return; /* hidden conditional item doesn't count */
+    if (it.group) leaves = leaves.concat(flattenLeaves(it.children));
+    else leaves.push(it);
+  });
+  return leaves;
+}
+
+function isChecked(id){
+  const v = state[id];
+  return v === true || v === 'Yes' || v === 'No';
+}
+
+function groupAutoChecked(it){
+  return it.children.every(c => isChecked(c.id));
+}
+
+function sectionCounts(sec){
+  const leaves = flattenLeaves(sec.items);
+  return { done: leaves.filter(l => isChecked(l.id)).length, total: leaves.length };
+}
+
+function sectionComplete(i){
+  const c = sectionCounts(SECTIONS[i]);
+  return c.done === c.total;
+}
+
+/* A section is reachable if it's at or before the first incomplete section */
+function maxReachableIdx(){
+  for (let i = 0; i < SECTIONS.length; i++){
+    if (!sectionComplete(i)) return i;
+  }
+  return SECTIONS.length - 1;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function flashRemaining(){
+  /* nudge the unchecked rows so she can spot them */
+  document.querySelectorAll('.item:not(.checked):not(.group-parent), .yesno-item:not(.answered)').forEach(el => {
+    el.classList.remove('attention');
+    void el.offsetWidth; /* restart animation */
+    el.classList.add('attention');
+  });
+  const first = document.querySelector('.item:not(.checked):not(.group-parent), .yesno-item:not(.answered)');
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function render(){
+  const sec = SECTIONS[currentIdx];
+  const main = document.getElementById('sections');
+  main.innerHTML = '';
+
+  /* overall progress */
+  let totalLeaves = 0, totalChecked = 0;
+  SECTIONS.forEach(s => {
+    const c = sectionCounts(s);
+    totalLeaves += c.total;
+    totalChecked += c.done;
+  });
+  const pct = totalLeaves ? Math.round((totalChecked/totalLeaves)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${totalChecked} / ${totalLeaves}`;
+
+  /* section pills */
+  const reachable = maxReachableIdx();
+  const dots = document.getElementById('dotsRow');
+  dots.innerHTML = '';
+  SECTIONS.forEach((s, i) => {
+    const done = sectionComplete(i);
+    const locked = i > reachable;
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === currentIdx ? ' current' : '') + (locked ? ' locked' : '');
+    d.setAttribute('aria-label', locked ? `${s.title} (finish earlier sections first)` : `Go to ${s.title} section`);
+    d.title = locked ? 'Finish earlier sections first' : `Go to ${s.title}`;
+    d.innerHTML = done
+      ? `<span>${s.title}</span><span class="dot-check">✓</span>`
+      : `<span>${s.title}</span>`;
+    if (done){
+      d.style.background = 'var(--ok)';
+      d.style.color = '#FFFFFF';
+    } else if (!locked && (i === currentIdx || sectionCounts(s).done > 0)){
+      d.style.background = `var(--c-${s.color}-bg)`;
+      d.style.color = `var(--c-${s.color})`;
+    }
+    d.addEventListener('click', () => {
+      if (locked){
+        showToast('Finish the earlier sections first');
+        return;
+      }
+      currentIdx = i;
+      render();
+      scrollTop();
+    });
+    dots.appendChild(d);
+  });
+
+  /* current section */
+  const counts = sectionCounts(sec);
+  const allDone = counts.done === counts.total;
+
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  head.innerHTML = `
+    <div class="tab ${allDone ? 'done' : ''}" style="background: var(--c-${sec.color}-bg); color: var(--c-${sec.color});">
+      <span>${sec.title}</span><span class="tab-count">${counts.done}/${counts.total}</span>
+    </div>
+    <div class="step-label">Section ${currentIdx+1} of ${SECTIONS.length}</div>`;
+
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  const inner = document.createElement('div');
+  inner.className = 'section-body-inner';
+  sec.items.forEach(it => inner.appendChild(renderItem(it, false)));
+  body.appendChild(inner);
+
+  main.appendChild(head);
+  main.appendChild(body);
+
+  /* nav buttons */
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('navHint');
+  prevBtn.disabled = currentIdx === 0;
+  prevBtn.textContent = currentIdx === 0 ? '‹ Previous' : '‹ ' + SECTIONS[currentIdx-1].title;
+
+  const isLast = currentIdx === SECTIONS.length - 1;
+  nextBtn.textContent = isLast ? 'Finish ✓' : SECTIONS[currentIdx+1].title + ' ›';
+
+  const remaining = counts.total - counts.done;
+  if (remaining > 0){
+    nextBtn.classList.add('waiting');
+    hint.textContent = remaining === 1
+      ? '1 item left in this section'
+      : `${remaining} items left in this section`;
+    hint.classList.add('show');
+  } else {
+    nextBtn.classList.remove('waiting');
+    hint.classList.remove('show');
+  }
+}
+
+function renderItem(it, nested){
+  if (it.showIf && !it.showIf()){
+    state[it.id] = undefined; /* reset if it was checked before being hidden */
+    return document.createDocumentFragment();
+  }
+
+  if (it.group){
+    const auto = groupAutoChecked(it);
+    state[it.id] = auto;
+
+    const wrap = document.createDocumentFragment();
+    const row = document.createElement('div');
+    row.className = 'item group-parent' + (auto ? ' checked auto' : '');
+    row.innerHTML = `<div class="box">${CHECK_SVG}</div><div class="label">${it.label}<span class="sublabel">Auto-checks when all fields below are complete</span></div>`;
+    wrap.appendChild(row);
+    it.children.forEach(c => wrap.appendChild(renderItem(c, true)));
+    return wrap;
+  }
+
+  if (it.yesno){
+    const val = state[it.id];
+    const row = document.createElement('div');
+    row.className = 'yesno-item' + ((val === 'Yes' || val === 'No') ? ' answered' : '');
+    row.innerHTML = `
+      <div class="yesno-label">${it.label}</div>
+      <div class="yesno-btns">
+        <button data-val="Yes" class="${val==='Yes'?'active':''}">Yes</button>
+        <button data-val="No" class="${val==='No'?'active':''}">No</button>
+      </div>`;
+    row.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const v = btn.dataset.val;
+        state[it.id] = (state[it.id] === v) ? undefined : v;
+        render();
+      });
+    });
+    return row;
+  }
+
+  const checked = isChecked(it.id);
+  const row = document.createElement('div');
+  row.className = 'item' + (nested ? ' nested' : '') + (checked ? ' checked' : '');
+  const sub = it.sublabel ? `<span class="sublabel">${it.sublabel}</span>` : '';
+  row.innerHTML = `<div class="box">${CHECK_SVG}</div><div class="label">${it.label}${sub}</div>`;
+  row.addEventListener('click', () => {
+    state[it.id] = !checked;
+    render();
+  });
+  return row;
+}
+
+function scrollTop(){ window.scrollTo({ top: 0 }); }
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (currentIdx > 0){ currentIdx--; render(); scrollTop(); }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  const counts = sectionCounts(SECTIONS[currentIdx]);
+  const remaining = counts.total - counts.done;
+
+  if (remaining > 0){
+    showToast(remaining === 1
+      ? 'Almost there — 1 item left to check'
+      : `Not yet — ${remaining} items left to check`);
+    flashRemaining();
+    return;
+  }
+
+  if (currentIdx < SECTIONS.length - 1){
+    currentIdx++;
+    render();
+    scrollTop();
+  } else {
+    openFinishModal();
+  }
+});
+
+/* ---------- Finish modal ---------- */
+function openFinishModal(){
+  const pick = FINISH_MESSAGES[Math.floor(Math.random() * FINISH_MESSAGES.length)];
+  const caseNo = document.getElementById('caseNo').value.trim();
+  document.getElementById('modalTitle').textContent = pick.title;
+  document.getElementById('modalMsg').textContent =
+    (caseNo ? `Case ${caseNo} is fully checked. ` : '') + pick.msg;
+  document.getElementById('finishModal').classList.add('show');
+}
+
+document.getElementById('modalNewBtn').addEventListener('click', () => {
+  document.getElementById('finishModal').classList.remove('show');
+  resetAll();
+});
+document.getElementById('modalCloseBtn').addEventListener('click', () => {
+  document.getElementById('finishModal').classList.remove('show');
+});
+
+/* ---------- Case number modal ---------- */
+const caseModal = document.getElementById('caseModal');
+const caseModalInput = document.getElementById('caseModalInput');
+const caseStartBtn = document.getElementById('caseStartBtn');
+
+function openCaseModal(){
+  caseModalInput.value = '';
+  caseStartBtn.disabled = true;
+  caseModal.classList.add('show');
+  setTimeout(() => caseModalInput.focus(), 100);
+}
+
+caseModalInput.addEventListener('input', () => {
+  caseStartBtn.disabled = caseModalInput.value.trim() === '';
+});
+
+caseModalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && caseModalInput.value.trim() !== ''){
+    startChecklist();
+  }
+});
+
+caseStartBtn.addEventListener('click', startChecklist);
+
+function startChecklist(){
+  const num = caseModalInput.value.trim();
+  if (!num) return;
+  document.getElementById('caseNo').value = num;
+  document.getElementById('caseLockHint').style.display = 'inline';
+  caseModal.classList.remove('show');
+  render();
+  scrollTop();
+}
+
+/* ---------- New checklist ---------- */
+document.getElementById('newBtn').addEventListener('click', () => {
+  const hasWork = Object.values(state).some(v => v === true || v === 'Yes' || v === 'No');
+  if (!hasWork){
+    resetAll();
+    return;
+  }
+  if (confirm('Start a new checklist? This clears the current case.')){
+    resetAll();
+  }
+});
+
+function resetAll(){
+  state = {};
+  currentIdx = 0;
+  document.getElementById('caseNo').value = '';
+  document.getElementById('caseLockHint').style.display = 'none';
+  render();
+  scrollTop();
+  openCaseModal();
+}
+
+render();
+openCaseModal();
+</script>
+</body>
+</html>
