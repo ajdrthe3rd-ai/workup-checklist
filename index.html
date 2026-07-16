@@ -39,6 +39,8 @@
     --c-notice-bg: #FAEBEA;
     --c-others: #5B6472;
     --c-others-bg: #EDEDEB;
+    --c-cupcake: #C25C88;
+    --c-cupcake-bg: #F9E9F1;
   }
 
   html[data-theme="dark"]{
@@ -67,6 +69,8 @@
     --c-notice-bg: #3C2624;
     --c-others: #A6ADB8;
     --c-others-bg: #2B2F36;
+    --c-cupcake: #E08FB4;
+    --c-cupcake-bg: #3A2530;
   }
 
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
@@ -660,6 +664,7 @@ const SECTIONS = [
       { id: 'if_notes', label: 'Notes from Client' },
       { id: 'if_military', label: 'Active Military', yesno: true },
       { id: 'if_cares', label: 'Under CARES', yesno: true },
+      { id: 'if_prop_info', label: 'Check Prop Info', sublabel: 'Required because Under CARES is Yes', showIf: () => state['if_cares'] === 'Yes' },
     ]
   },
   {
@@ -697,9 +702,7 @@ const SECTIONS = [
     items: [
       ...nameAddressGroups('notice'),
       { id: 'notice_expiration', label: 'Notice Expiration' },
-      { id: 'notice_service_date', label: 'Date of Service' },
-      { id: 'notice_30_3', label: '30 Days/3 Days' },
-      { id: 'notice_through_date', label: 'Through Date' },
+      { id: 'notice_service_date', label: 'Date of Service', sublabel: 'Check if already expired' },
     ]
   },
   {
@@ -708,6 +711,29 @@ const SECTIONS = [
       { id: 'others_delete_pages', label: 'Delete Unnecessary Pages' },
       { id: 'others_rotate', label: 'Rotate' },
       { id: 'others_stamps', label: 'Check Stamps' },
+    ]
+  },
+  {
+    key: 'cupcake', title: 'Cupcake', color: 'cupcake',
+    items: [
+      { id: 'cc_name', label: 'Name', group: true, children: [
+        { id: 'cc_first', label: 'First Name' },
+        { id: 'cc_middle', label: 'Middle Name' },
+        { id: 'cc_last', label: 'Last Name' },
+        { id: 'cc_suffix', label: 'Suffix' },
+      ]},
+      { id: 'cc_address', label: 'Address', group: true, children: [
+        { id: 'cc_county', label: 'County' },
+        { id: 'cc_street_no', label: 'Street No. / Apartment No.' },
+        { id: 'cc_street_name', label: 'Street Name' },
+        { id: 'cc_abbreviate', label: 'Abbreviate' },
+        { id: 'cc_city', label: 'City' },
+        { id: 'cc_zip', label: 'Zipcode' },
+      ]},
+      { id: 'cc_notice_expiration', label: 'Notice Expiration' },
+      { id: 'cc_service_date', label: 'Date of Service' },
+      { id: 'cc_30_3', label: '30 Days/3 Days' },
+      { id: 'cc_through_date', label: 'Through Date' },
     ]
   },
 ];
@@ -726,6 +752,7 @@ let toastTimer = null;
 function flattenLeaves(items){
   let leaves = [];
   items.forEach(it => {
+    if (it.showIf && !it.showIf()) return; /* hidden conditional item doesn't count */
     if (it.group) leaves = leaves.concat(flattenLeaves(it.children));
     else leaves.push(it);
   });
@@ -873,6 +900,11 @@ function render(){
 }
 
 function renderItem(it, nested){
+  if (it.showIf && !it.showIf()){
+    state[it.id] = undefined; /* reset if it was checked before being hidden */
+    return document.createDocumentFragment();
+  }
+
   if (it.group){
     const auto = groupAutoChecked(it);
     state[it.id] = auto;
@@ -910,7 +942,8 @@ function renderItem(it, nested){
   const checked = isChecked(it.id);
   const row = document.createElement('div');
   row.className = 'item' + (nested ? ' nested' : '') + (checked ? ' checked' : '');
-  row.innerHTML = `<div class="box">${CHECK_SVG}</div><div class="label">${it.label}</div>`;
+  const sub = it.sublabel ? `<span class="sublabel">${it.sublabel}</span>` : '';
+  row.innerHTML = `<div class="box">${CHECK_SVG}</div><div class="label">${it.label}${sub}</div>`;
   row.addEventListener('click', () => {
     state[it.id] = !checked;
     render();
